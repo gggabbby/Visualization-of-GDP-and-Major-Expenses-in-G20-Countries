@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Chart</title>
+    <link rel="stylesheet" href="style/mStyle.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        // load required package
+        google.charts.load('current', {'packages': ['corechart', 'geochart', 'controls']});
+        // plot all figuers
+        google.charts.setOnLoadCallback(plotAllFiguers);
+
+        // list of figuers that need to plot
+        function plotAllFiguers(){
+            plotFiguer('compare', 'SELECT AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE,BF', GrowningTrendEduFixed_ResponseHandler);
+            plotFiguer('compare', 'SELECT BH,BI,BJ,BK,BL,BM,BN,BO,BP,BQ,BR,BS,BT,BU,BV,BW,BX,CA,BZ', GrowningTrendHealFixed_ResponseHandler);
+            plotFiguer('compare_per', 'SELECT AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV', GrowningTrendEduPers_ResponseHandler);
+            plotFiguer('compare_per', 'SELECT AX,AY,AZ,BA,BB,BC,BD,BE,BF,BG,BH,BI,BJ,BK,BL,BM,BN,BO,BP', GrowningTrendHealPers_ResponseHandler);
+
+            plotFiguer('compare', 'SELECT K,L,M,N,O,P,Q,R', GrowningTrendEduFixedCol_ResponseHandler);
+            plotFiguer('compare', 'SELECT U,V,W,X,Y,Z,AA,AB', GrowningTrendHealFixedCol_ResponseHandler);
+            plotFiguer('compare_per', 'SELECT A,B,C,D,E,F,G,H', GrowningTrendEduPersCol_ResponseHandler);
+            plotFiguer('compare_per', 'SELECT K,L,M,N,O,P,Q,R', GrowningTrendHealPersCol_ResponseHandler);
+        }
+
+        function checkError(response) {
+            if (response.isError()) {
+                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage())
+                return;
+            }
+        } 
+
+        function plotFiguer(sheetName, query, responseHandler){
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/13vcID9kGBc8-a3cO0lKLIO6NxHwtum8af6vVdx-vxQ0/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+            query.send(responseHandler);
+        }
+
+        // line chart with filter that we can choose compare year
+        // and shows trend.
+        function GrowningTrendEduFixed_ResponseHandler(response) {
+            checkError(response);
+            var data = response.getDataTable();
+            var dashboard = new google.visualization.Dashboard(
+                document.getElementById('GrowningTrendEduFixed_dash_div'));
+            var lineChart = new google.visualization.ChartWrapper({
+                'chartType': 'LineChart',
+                'containerId': 'GrowningTrendEduFixed_chart_div',
+                'options': {
+                    'width': 442,
+                    'height': 460,
+                    'title' : 'Healthcare spending in fixed value of different countries line chart (Billions $)',
+                    'hAxis' : {
+                        'title' : 'Year',
+                        'format' : 'decimal'
+                    },
+                    'vAxis' : {
+                        'format':'decimal'
+                    }
+                }
+            });
+            var CategoryFilter = new google.visualization.ControlWrapper({
+                'controlType': 'CategoryFilter',
+                'containerId': 'GrowningTrendEduFixed_filter_div',
+                'options': {
+                    'filterColumnLabel': 'Country Name',
+                },
+                'state': {'selectedValues': ['United States']}
+            });
+            dashboard.bind(CategoryFilter, lineChart);
+            dashboard.draw(data);
+        } 
+
+        function GrowningTrendHealFixed_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            var dashboard = new google.visualization.Dashboard(
+                document.getElementById('GrowningTrendHealFixed_dash_div'));
+            var lineChart = new google.visualization.ChartWrapper({
+                'chartType': 'LineChart',
+                'containerId': 'GrowningTrendHealFixed_chart_div',
+                'options': {
+                    'width': 442,
+                    'height': 460,
+                    title: 'Edu spending in fixed value of different countries line chart (Billions $)',
+                    'hAxis' : {
+                        'title' : 'Year',
+                        'format' : 'decimal'
+                    },
+                    'vAxis' : {
+                        'format':'decimal'
+                    }
+                }
+            });
+            var CategoryFilter = new google.visualization.ControlWrapper({
+                'controlType': 'CategoryFilter',
+                'containerId': 'GrowningTrendHealFixed_filter_div',
+                'options': {
+                    'filterColumnLabel': 'Country Name',
+                },
+                'state': {'selectedValues': ['United States']}
+            });
+            dashboard.bind(CategoryFilter, lineChart);
+            dashboard.draw(data);
+        }
+
+        function GrowningTrendEduPers_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            var dashboard = new google.visualization.Dashboard(
+                document.getElementById('GrowningTrendEduPers_dash_div'));
+            var lineChart = new google.visualization.ChartWrapper({
+                'chartType': 'LineChart',
+                'containerId': 'GrowningTrendEduPers_chart_div',
+                'options': {
+                    'width': 442,
+                    'height': 460,
+                    'title': 'Healthcare spending in percentage of different countries line chart (%)',
+                    'hAxis' : {
+                        'title' : 'Year',
+                        'format' : 'decimal'
+                    },
+                    'vAxis' : {
+                        'format':'decimal'
+                    }
+                }
+            });
+            var CategoryFilter = new google.visualization.ControlWrapper({
+                'controlType': 'CategoryFilter',
+                'containerId': 'GrowningTrendEduPers_filter_div',
+                'options': {
+                    'filterColumnLabel': 'Country Name',
+                },
+                'state': {'selectedValues': ['United States']}
+            });
+            dashboard.bind(CategoryFilter, lineChart);
+            dashboard.draw(data);
+        }
+
+        function GrowningTrendHealPers_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            var dashboard = new google.visualization.Dashboard(
+                document.getElementById('GrowningTrendHealPers_dash_div'));
+            var lineChart = new google.visualization.ChartWrapper({
+                'chartType': 'LineChart',
+                'containerId': 'GrowningTrendHealPers_chart_div',
+                'options': {
+                    'width': 442,
+                    'height': 460,
+                    'title': 'Edu spending in percentage of different countries line chart (%)',
+                    'hAxis' : {
+                        'title' : 'Year',
+                        'format' : 'decimal'
+                    },
+                    'vAxis' : {
+                        'format':'decimal'
+                    }
+                }
+            });
+            var CategoryFilter = new google.visualization.ControlWrapper({
+                'controlType': 'CategoryFilter',
+                'containerId': 'GrowningTrendHealPers_filter_div',
+                'options': {
+                    'filterColumnLabel': 'Country Name',
+                },
+                'state': {'selectedValues': ['United States']}
+            });
+            dashboard.bind(CategoryFilter, lineChart);
+            dashboard.draw(data);
+        }
+
+        function GrowningTrendEduFixedCol_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc:true});
+            var options = {
+                hAxis: {title: 'Country'},
+                title:'Healthcare spending in fixed value of different countries bar chart (Billions $)'
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('GrowningTrendEduFixedCol_chart_div'));
+            chart.draw(data, options);
+        }
+
+        function GrowningTrendHealFixedCol_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc:true});
+            var options = {
+                hAxis: {title: 'Country'},
+                title: 'Edu spending in fixed value of different countries bar chart (Billions $)'
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('GrowningTrendHealFixedCol_chart_div'));
+            chart.draw(data, options);
+        }
+
+        function GrowningTrendEduPersCol_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc:true});
+            var options = {
+                hAxis: {title: 'Country'},
+                title: 'Healthcare spending in percentage of different countries bar chart (%)'
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('GrowningTrendEduPersCol_chart_div'));
+            chart.draw(data, options);
+        }
+
+        function GrowningTrendHealPersCol_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc:true});
+            var options = {
+                hAxis: {title: 'Country'},
+                title: 'Edu spending in percentage of different countries bar chart (%)'
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('GrowningTrendHealPersCol_chart_div'));
+            chart.draw(data, options);
+        }
+
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div id="header">
+            <div id="title">
+                <div id="title_text">
+                    <h1 id = "title1">Visualization of Complex Data_DATS_6401</h1>
+                    <h2 id = "title2">Individual Project | Name: Jingya Gao</h2>
+                </div><!-- title text -->
+            </div><!-- title -->
+            <div id="navbar">
+                <a href="Trend.html">Trend</a>
+                <a href="Compare.html">Compare</a>
+                <a href="home.html">Home</a>
+            </div><!-- menubar -->
+        </div><!-- header -->
+
+        <div class="trendcontainer">
+            <table align="center">
+                <tr>
+                    <h3 class="trendsectiontitle" style="padding-top: 15px;">Fastest Growing Countries in Healthcare Spending in Fixed Value</h3>
+                </tr>
+                <tr style="outline: solid 1px #000000;">
+                    <td>
+                        <div id="GrowningTrendEduFixed_dash_div" style="background: #ffffff">
+                            <div id="GrowningTrendEduFixed_filter_div"></div>
+                            <div id="GrowningTrendEduFixed_chart_div"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="GrowningTrendEduFixedCol_chart_div" style="width: 442px; height: 480px; outline: solid 1px #000000;"></div>
+                    </td>
+                </tr>
+            </table> <!-- first pair of chart -->
+            <p style="text-align: center; background-color: #ffffff; outline: solid 1px #000000; width: 888; font-size: 14px;padding: 10px 40px 10px 40px;">
+                As can be seen from the above two tables, from 2011 to 2017, the medical expenditure data of many 
+                countries were not recorded in the database, which resulted in a situation where some data in the 
+                chart was 0. Looking at the overall trend, the EU's expenditure on healthcare has increased in recent years. 
+                Because of the lack of data in the United States, it can only be judged that medical expenditures 
+                have increased rapidly in 2013-2014.
+            </p>
+            
+            <table align="center">
+                <tr>
+                    <h3 class="trendsectiontitle2" style="padding-top: 15px;">Fastest Growing Countries in Educational Spending in fixed value</h3>
+                </tr>
+                <tr style="outline: solid 1px #000000;">
+                    <td>
+                        <div id="GrowningTrendHealFixed_dash_div" style="background: #ffffff">
+                            <div id="GrowningTrendHealFixed_filter_div"></div>
+                            <div id="GrowningTrendHealFixed_chart_div"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="GrowningTrendHealFixedCol_chart_div" style="width: 442px; height: 480px; outline: solid 1px #000000;"></div>
+                    </td>
+                </tr>
+            </table><!-- second pair of chart -->
+            <p style="text-align: center; background-color: #ffffff; outline: solid 1px #000000; width: 888;font-size: 14px;padding: 10px 40px 10px 40px;">
+                As can be seen from the above two tables, from 2011 to 2017, education expenditure in the United States 
+                grew the fastest, and the value was also the highest, followed by the European Union, but the value fell in 
+                2014 and 2015, and then It began to rise gradually.
+            </p>
+            
+            <table align="center">
+                <tr>
+                    <h3 class="trendsectiontitle3" style="padding-top: 15px;">Fastest Growing Countries in Healthcare spending in percentage</h3>
+                </tr>
+                <tr style="outline: solid 1px #000000;">
+                    <td>
+                        <div id="GrowningTrendEduPers_dash_div" style="background: #ffffff">
+                            <div id="GrowningTrendEduPers_filter_div"></div>
+                            <div id="GrowningTrendEduPers_chart_div"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="GrowningTrendEduPersCol_chart_div" style="width: 442px; height: 480px; outline: solid 1px #000000;"></div>
+                    </td>
+                </tr>
+            </table> <!-- third pair of chart -->
+            <p style="text-align: center; background-color: #ffffff; outline: solid 1px #000000; width: 888;font-size: 14px;padding: 10px 40px 10px 40px;">
+                As can be seen from the above two tables, from 2011 to 2017, the medical expenditure data of many countries 
+                were not recorded in the database, which resulted in a situation where some data in the chart was 0.Selecting 
+                countries with relatively complete data, it can be found that Brazil’s annual medical expenditures account 
+                for the country’s GDP as a percentage of each year. At the same time, Russia has also shown a rapid growth 
+                trend in recent years.
+            </p>
+            
+            <table align="center">
+                <tr>
+                    <h3 class="trendsectiontitle4" style="padding-top: 15px;">Fastest growing countries in educational spending in percentage</h3>
+                </tr>
+                <tr style="outline: solid 1px #000000;">
+                    <td>
+                        <div id="GrowningTrendHealPers_dash_div" style="background: #ffffff">
+                            <div id="GrowningTrendHealPers_filter_div"></div>
+                            <div id="GrowningTrendHealPers_chart_div"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="GrowningTrendHealPersCol_chart_div" style="width: 442px; height: 480px; outline: solid 1px #000000;"></div>
+                    </td>
+                </tr>
+            </table> <!-- last pair of chart -->
+            <p style="text-align: center; background-color: #ffffff; outline: solid 1px #000000; width: 888;font-size: 14px; padding: 10px 40px 10px 40px;">
+                As can be seen from the above chart, from 2011 to 2017, the share of total GDP in education in each country 
+                has shown an upward trend. Among them, the United States has the highest share, and South Korea and Brazil 
+                have the highest share growth rates. India has also experienced very significant growth in the past few years, 
+                but it has declined in the past two years.
+            </p>
+
+            <h3 style="padding-top: 20px;">
+                Conclution
+            </h3>
+            <p style="font-size: 14px; padding: 10px 40px 30px 40px">
+                According to the analysis and research of this individual project, it can be found that from 2011 to 2017, 
+                each country’s education, medical and military expenditures accounted for no more than 30% of the country’s GDP. 
+                Among these three items, health medical expenses are the largest. The top three in total gdp are the United States, 
+                the European Union and China. The top three countries with GDP per capita are Australia, the United States and 
+                Canada. In terms of medical care, expenditures in each country tend to stabilize and rise slowly. In terms of 
+                education, all countries are increasing expenditure year by year, and there is a clear upward trend. Based on 
+                the data of these 7 years, it can be inferred that in the next few years, the expenditure on health and medical 
+                care in various countries will also tend to stabilize, and the expenditure on education will continue to rise gradually. 
+                This shows that with the progress of the times and the development of science and technology, peoples’ health 
+                have improved and they are all pursuing higher education.
+            </p> <!-- conclusion -->
+
+        </div> <!-- trend page content -->
+
+        <div id="footer" style="float: right; font-size: 18px; padding: 20px 5px 20px 5px;">
+            Copyright &copy; 2020 | 
+            <a href="http://validator.w3.org/check?uri=referer" target="_blank">HTML5</a> | 
+            <a href="http://jigsaw.w3.org/css-validator/check/referer" target="_blank">CSS3</a> | 
+            Developed by <a href="http://www.gwu.edu/">Jingya Gao</a>
+        </div><!-- footer -->
+    </div>
+</body>
+</html>

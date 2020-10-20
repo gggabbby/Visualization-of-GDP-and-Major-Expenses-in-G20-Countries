@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/mStyle.css">
+    <title>Compare figuers</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages': ['corechart', 'geochart', 'controls']});
+        google.charts.setOnLoadCallback(plotAllFiguers);
+
+        function plotAllFiguers(){
+            plotFiguer('compare', 'SELECT A,N,X,AH,CC', SpendingData_ResponseHandler);
+            plotFiguer('compare', 'SELECT A,T,AH', HeaEduToMilCompare_ResponseHandler);
+            plotFiguer('compare_pc', 'SELECT A,D,N', PPEToPPGDP_ResponseHandler);
+            plotFiguer('compare_pc', 'SELECT A,D,X', PPHToPPGDP_ResponseHandler);
+            plotFiguer('compare_pc', 'SELECT A,D,AH', PPMToPPGDP_ResponseHandler);
+        }
+
+        function checkError(response) {
+            if (response.isError()) {
+                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage())
+                return;
+            }
+        } 
+
+        function plotFiguer(sheetName, query, responseHandler){
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/13vcID9kGBc8-a3cO0lKLIO6NxHwtum8af6vVdx-vxQ0/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+            query.send(responseHandler);
+        }
+
+        function SpendingData_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                legend: {position: 'top', maxLines: 2},
+                bar: {groupWidth: '75%'},
+                isStacked: true,
+                title: 'GDP spending of different countries in 2013 (Billions $)'
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('spending_data_gdp_div'));
+            chart.draw(data, options);
+        }        
+
+        function HeaEduToMilCompare_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                legend: {position: 'top', maxLines: 2},
+                bar: {groupWidth: '75%'},
+                isStacked: true,
+                title: 'Edu and health to the military spending of the counties in 2013 (Billions $)'
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('hea_edu_to_milCompare_div'));
+            chart.draw(data, options);
+        }
+
+        function PPEToPPGDP_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                hAxis: {title: 'Country'},
+                vAxis: {title: 'Per Person GDP vs Education Spend'},
+                title: 'Per person edu spending to the Per Person GDP in 2013'
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('PPE_to_PPGDPCompare_div'));
+            chart.draw(data, options);
+        }
+        function PPHToPPGDP_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                hAxis: {title: 'Country'},
+                vAxis: {title: 'Per Person GDP vs Health Spend'},
+                title: 'Per person health spending to the per person GDP in 2013'
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('PPH_to_PPGDPCompare_div'));
+            chart.draw(data, options);
+        }
+        function PPMToPPGDP_ResponseHandler(response){
+            checkError(response);
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                hAxis: {title: 'Country'},
+                vAxis: {title: 'Per Person GDP vs Militery Spend'},
+                title: 'Per person military spending to the per person GDP  in 2013'
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('PPM_to_PPGDPCompare_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div id="header">
+            <div id="title">
+                <div id="title_text">
+                    <h1 id = "title1">Visualization of Complex Data_DATS_6401</h1>
+                    <h2 id = "title2">Individual Project | Name: Jingya Gao</h2>
+                </div><!-- title text -->
+            </div><!-- title -->
+            <div id="navbar">
+                <a href="Trend.html">Trend</a>
+                <a href="Compare.html">Compare</a>
+                <a href="home.html">Home</a>
+            </div><!-- menubar -->
+        </div><!-- header -->
+
+        <div>
+            <table align="center">
+                <tr>
+                    <td>
+                        <h2 class="comparetitle">Compare the Spending Data to Different Countries GDP in 2013</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="spending_data_gdp_div" style="width: 650px; height: 450px; outline: solid 1px #000000;"></div>
+                    </td>
+                    <td>
+                        <div class="comparetext">
+                            <p style="font-size: 14px; padding-top: 100px;">
+                                As can be seen from the chart on the left, in 2013, the United States, 
+                                the European Union and Japan accounted for the top three spending on education, 
+                                health, and military. Among them, military expenses account for a small part, 
+                                and health and medical expenses together account for the most.
+                            </p>
+                        </div>
+                    </td>
+                </tr> <!-- first chart -->
+                <tr>
+                    <td>
+                        <h2 class="comparetitle">Compare the Education and Health to the Overall Military Spending of the Counties in 2013</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="hea_edu_to_milCompare_div" style="width: 650px; height: 450px; outline: solid 1px #000000;"></div>
+                    </td>
+                    <td>
+                        <div class="comparetext">
+                            <p style="font-size: 14px; padding-top: 80px;">
+                                As can be seen from the chart on the left, in 2013, the three countries with the highest 
+                                per capita GDP were Australia, the United States, and Canada. The per capita GDP of these 
+                                three countries reached more than $50,000. Among them, Australia also ranks first in education 
+                                expenditure per capita. Since there is no statistics on Canada’s per capita education 
+                                expenditure this year, the per capita education expenditure in Canada is partially shown as 0.
+                            </p>
+                        </div>
+                    </td>
+                </tr> <!-- second chart -->
+                <tr>
+                    <td>
+                        <h2 class="comparetitle">Compare the Per Person Educational Spending to the Per Person GDP in 2013</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="PPE_to_PPGDPCompare_div" style="width: 650px; height: 450px; outline: solid 1px #000000;"></div>
+                    </td>
+                    <td>
+                        <div class="comparetext">
+                            <p style="font-size: 14px; padding-top: 70px;">
+                                As can be seen from the chart on the left, in 2013, the three countries with the highest 
+                                per capita GDP were Australia, the United States, and Canada. The per capita GDP of 
+                                these three countries reached more than $50,000. Among them, Australia also ranks first 
+                                in education expenditure per capita. Since there is no statistics on Canada’s per capita 
+                                education expenditure this year, the per capita education expenditure in Canada is partially shown as 0.
+                            </p>
+                        </div>
+                    </td>
+                </tr><!-- third chart -->
+                <tr>
+                    <td>
+                        <h2 class="comparetitle">Compare the Per Person Healthcare Spending to the Per Person GDP in 2013</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="PPH_to_PPGDPCompare_div" style="width: 650px; height: 450px; outline: solid 1px #000000;"></div>
+                    </td>
+                    <td>
+                        <div class="comparetext">
+                            <p style="font-size: 14px; padding-top: 100px;">
+                                As can be seen from the chart on the left, in 2013, the three countries with the highest per 
+                                capita GDP were Australia, the United States, and Canada. The per capita GDP of these three 
+                                countries reached more than $50,000. Among them, the United States has the highest number of per 
+                                capita medical expenses, followed by Australia and Canada.
+                            </p>
+                        </div>
+                    </td>
+                </tr> <!-- forth chart -->
+                <tr>
+                    <td>
+                        <h2 class="comparetitle">Compare the per person military spending to the per person GDP in 2013</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="PPM_to_PPGDPCompare_div" style="width: 650px; height: 450px; outline: solid 1px #000000;"></div>
+                    </td>
+                    <td>
+                        <div class="comparetext">
+                            <p style="font-size: 14px; padding-top: 80px;">
+                                As can be seen from the chart on the left, in 2013, the three countries with the 
+                                highest per capita GDP were Australia, the United States, and Canada. The per capita GDP of 
+                                these three countries reached more than $50,000. However, the per capita military expenditure of 
+                                these three countries did not rank first. The country that ranks first in per capita military 
+                                expenditure is Russia, followed by the United States, followed by Australia.
+                            </p>
+                        </div>
+                    </td>
+                </tr><!-- last chart -->
+            </table>
+        </div> <!-- compare page content -->
+
+        <div id="footer" style="float: right; font-size: 18px; padding: 20px 5px 20px 5px;">
+            Copyright &copy; 2020 | 
+            <a href="http://validator.w3.org/check?uri=referer" target="_blank">HTML5</a> | 
+            <a href="http://jigsaw.w3.org/css-validator/check/referer" target="_blank">CSS3</a> | 
+            Developed by <a href="http://www.gwu.edu/">Jingya Gao</a>
+        </div> <!-- footer -->
+
+    </div><!--main-->
+</body>
+</html>
