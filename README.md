@@ -1,4 +1,4 @@
-## Visualization of GDP and medical, military, and government spending in G20 countries
+## Visualization of GDP and Three Major Expenses in G20 Countries
 ### Gabby Gao
 
 access home page at 
